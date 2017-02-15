@@ -36,7 +36,7 @@ tvr <- function() {
   }
   rownames(tvr.data) <- NULL
   View(tvr.data)
-  return(timevis::timevis(data=tvr.data))
+  return(timevis::timevis(tvr.data))
 }
 
 tvr_add <- function(content=NULL, start=NULL, end=NULL) {
@@ -52,13 +52,13 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL) {
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
   }
-  new <- data.frame(id=nrow(tvr.data):nrow(tvr.data) + length(content),
-                    content=content, start=start, end=end)
+  new <- data.frame(id=double(length(content)), content=content, start=start, end=end)
   tvr.data <- rbind(tvr.data, new)
+  tvr.data$id <- 1:nrow(tvr.data)  # reassigning ids here
   rownames(tvr.data) <- NULL
   save(tvr.data, file=DATA)
   View(tvr.data)
-  return(timevis::timevis(data=tvr.data))
+  return(timevis::timevis(tvr.data))
 }
 
 tvr_rm <- function(id=NULL) {
@@ -68,8 +68,9 @@ tvr_rm <- function(id=NULL) {
   stopifnot(isTRUE(require('timevis')), file.exists(DATA), !missing(id))
   load(DATA)
   tvr.data <- tvr.data[!tvr.data$id %in% id, ]
+  if (nrow(tvr.data) > 0) tvr.data$id <- 1:nrow(tvr.data)
   rownames(tvr.data) <- NULL
   save(tvr.data, file=DATA)
   View(tvr.data)
-  return(timevis::timevis(data=tvr.data))
+  return(timevis::timevis(tvr.data))
 }
