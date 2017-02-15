@@ -36,7 +36,6 @@ tvr <- function() {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
     save(tvr.data, file=tvr_DATA)
   }
-  rownames(tvr.data) <- NULL
   View(tvr.data)
   return(timevis::timevis(tvr.data))
 }
