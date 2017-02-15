@@ -14,8 +14,7 @@
 #   @column {Date} end Task end date
 #
 # Examples
-#   
-#   
+#   ...
 
 tvr <- function() {
   # Loads ur tvr data and returns an interactive timeplot of it.
@@ -27,6 +26,7 @@ tvr <- function() {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
     save(tvr.data, file='tvr.Rda')  # make absolute
   }
+  rownames(tvr.data) <- NULL
   View(tvr.data)
   return(timevis::timevis(tvr.data))
 }
@@ -36,6 +36,7 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL) {
   # @param {character} content Short description of task
   # @param {Date} start Plain Sys.Date() object
   # @param {Date} end Plain Sys.Date() object
+  # @param ... Further arguments 2 timevis::timevis()
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(isTRUE(require('timevis')),
             !missing(content), !missing(start), !missing(end))
@@ -44,20 +45,22 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL) {
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
   }
-  new <- data.frame(id=max(tvr.data$id) + 1, content=content, start=start, end=end)
+  new <- data.frame(id=nrow(tvr.data) + 1, content=content, start=start, end=end)
   tvr.data <- rbind(tvr.data, new)
+  rownames(tvr.data) <- NULL
   save(tvr.data, file='tvr.Rda')  # make absolute
   View(tvr.data)
   return(timevis::timevis(tvr.data))
 }
 
 tvr_rm <- function(id=NULL) {
-  # Removes a task from ur tvr data and renders a new plot.
-  # @param {double} id Task identifier
+  # Removes tasks from ur tvr data and renders a new plot.
+  # @param {double} id Vector of task identifier/s
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(isTRUE(require('timevis')), file.exists('tvr.Rda'), !missing(id))  # make absolute
   load('tvr.Rda')  # make absolute
-  tvr.data <- tvr.data[tvr.data$id != id, ]
+  tvr.data <- tvr.data[!tvr.data$id %in% id, ]
+  rownames(tvr.data) <- NULL
   save(tvr.data, file='tvr.Rda')  # make absolute
   View(tvr.data)
   return(timevis::timevis(tvr.data))
