@@ -2,9 +2,12 @@
 # 
 # Note
 #   designed 2 be stoopid simple - 3 functions only: view, add, rm
-#   4 ease of use avoid exact times, instead just pass values of Sys.Date(),
-#   Sys.Date() + 4, etc. 2 @params start and end of tvr_add(), allow every
-#   task 2 take at least 1 day
+#   @tvr_add()
+#     4 ease of use avoid exact times, instead just pass values of Sys.Date(),
+#       Sys.Date() + 4, etc. 2 @params start and end
+#     allow every task 2 take at least 1 day
+#     if u add multiple tasks at once make sure @params content, start, and end
+#       r all of the same length
 # 
 # Data format (just 4 u 2 know)
 #   tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
@@ -14,54 +17,59 @@
 #   @column {Date} end Task end date
 #
 # Examples
-#   ...
+#   tvr()  # view ur tasks
+#   tvr_add('new task', Sys.Date(), Sys.Date() + 2)  # 
+#   tvr_rm(1)  # 
+
+if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) dir.create(file.path(.libPaths()[1], 'tvr'))
+DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')
 
 tvr <- function() {
   # Loads ur tvr data and returns an interactive timeplot of it.
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(isTRUE(require('timevis')))
-  if (file.exists('tvr.Rda')) {  # make absolute
-    load('tvr.Rda')  # make absolute
+  if (file.exists(DATA)) {
+    load(DATA)
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
-    save(tvr.data, file='tvr.Rda')  # make absolute
+    save(tvr.data, file=DATA)
   }
   rownames(tvr.data) <- NULL
   View(tvr.data)
-  return(timevis::timevis(tvr.data))
+  return(timevis::timevis(data=tvr.data))
 }
 
 tvr_add <- function(content=NULL, start=NULL, end=NULL) {
-  # Adds a task 2 ur tvr data and renders a new plot.
-  # @param {character} content Short description of task
-  # @param {Date} start Plain Sys.Date() object
-  # @param {Date} end Plain Sys.Date() object
-  # @param ... Further arguments 2 timevis::timevis()
+  # Adds tasks 2 ur tvr data and renders a new plot.
+  # @param {character} content Vector of task descriptions
+  # @param {Date} start Vector of Sys.Date() values
+  # @param {Date} end Vector of Sys.Date() values
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(isTRUE(require('timevis')),
             !missing(content), !missing(start), !missing(end))
-  if (file.exists('tvr.Rda')) {  # make absolute
-    load('tvr.Rda')  # make absolute
+  if (file.exists(DATA)) {
+    load(DATA)
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL)
   }
-  new <- data.frame(id=nrow(tvr.data) + 1, content=content, start=start, end=end)
+  new <- data.frame(id=nrow(tvr.data):nrow(tvr.data) + length(content),
+                    content=content, start=start, end=end)
   tvr.data <- rbind(tvr.data, new)
   rownames(tvr.data) <- NULL
-  save(tvr.data, file='tvr.Rda')  # make absolute
+  save(tvr.data, file=DATA)
   View(tvr.data)
-  return(timevis::timevis(tvr.data))
+  return(timevis::timevis(data=tvr.data))
 }
 
 tvr_rm <- function(id=NULL) {
   # Removes tasks from ur tvr data and renders a new plot.
   # @param {double} id Vector of task identifier/s
   # @return {Object.<htmlwidgets>} Interactive timevis plot
-  stopifnot(isTRUE(require('timevis')), file.exists('tvr.Rda'), !missing(id))  # make absolute
-  load('tvr.Rda')  # make absolute
+  stopifnot(isTRUE(require('timevis')), file.exists(DATA), !missing(id))
+  load(DATA)
   tvr.data <- tvr.data[!tvr.data$id %in% id, ]
   rownames(tvr.data) <- NULL
-  save(tvr.data, file='tvr.Rda')  # make absolute
+  save(tvr.data, file=DATA)
   View(tvr.data)
-  return(timevis::timevis(tvr.data))
+  return(timevis::timevis(data=tvr.data))
 }
