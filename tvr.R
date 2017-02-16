@@ -40,7 +40,7 @@ if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) dir.create(file.path(.libPath
 TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # path 2 ur own data
 
 tvr <- function() {
-  # Renders and returns ur tvr data.
+  # Loads and renders ur tvr data.
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(nchar(TVR$DATA) > 0)
   if (file.exists(TVR$DATA)) {
