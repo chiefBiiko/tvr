@@ -41,7 +41,7 @@ TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # path 2 ur own data
 
 tvr <- function() {
   # Renders and returns ur tvr data.
-  # @return {data.frame} Ur personal tvr data
+  # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(nchar(TVR$DATA) > 0)
   if (file.exists(TVR$DATA)) {
     load(TVR$DATA)
