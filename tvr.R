@@ -13,8 +13,8 @@
 #   tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
 #   @column {double} id Task identifier
 #   @column {character} content Task description
-#   @column {Date} start Task start date
-#   @column {Date} end Task end date
+#   @column {character} start Task start date
+#   @column {character} end Task end date
 #   @column {double} group Ur personal identifier [TVR$ID]
 #   tvr.data is saved as ur personal task store @ TVR$DATA
 #
@@ -24,27 +24,32 @@
 #   tvr_add(c('new task', 'foo task'), rep(Sys.Date(), 2), rep(Sys.Date() + 1, 2))
 #   tvr_rm(1:2)  # remove tasks
 
+lapply(list('jsonlite', 'timevis'), function(p) {
+  if (!p %in% installed.packages()) install.packages(p)
+})
+
 TVR <- list()
 TVR$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVR$STORE_ID <- '1h2msv'
-TVR$ID <- sapply(list(TVR$NAME), function(n) {  # ur personal ID
+TVR$ID <- sapply(list(TVR$NAME), function(n) {
   hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVR$STORE_ID))$hash
-  return(hash[hash$content == TVR$NAME, 'id'])
-}) 
+  return(hash[hash$content == TVR$NAME, 'id'])  # ur personal ID
+})
 
 if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) dir.create(file.path(.libPaths()[1], 'tvr'))
-TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # ur own data
+TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # path 2 ur own data
 
 tvr <- function() {
-  # Loads ur tvr data and returns an interactive timeplot of it.
-  # @return {Object.<htmlwidgets>} Interactive timevis plot
-  stopifnot(isTRUE(require('timevis')))
+  # Renders and returns ur tvr data.
+  # @return {data.frame} Ur personal tvr data
+  stopifnot(nchar(TVR$DATA) > 0)
   if (file.exists(TVR$DATA)) {
     load(TVR$DATA)
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
     save(tvr.data, file=TVR$DATA)
   }
+  print.data.frame(tvr.data)
   return(timevis::timevis(tvr.data))
 }
 
@@ -54,19 +59,19 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL) {
   # @param {Date} start Vector of Sys.Date() values
   # @param {Date} end Vector of Sys.Date() values
   # @return {Object.<htmlwidgets>} Interactive timevis plot
-  stopifnot(isTRUE(require('timevis')), !missing(content), !missing(start), !missing(end))
+  stopifnot(!missing(content), !missing(start), !missing(end))
   if (file.exists(TVR$DATA)) {
     load(TVR$DATA)
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
   }
-  new <- data.frame(id=double(length(content)), content=content, start=start, end=end,
+  new <- data.frame(id=double(length(content)), content=as.character(content),
+                    start=format(start, '%Y-%m-%d'), end=format(end, '%Y-%m-%d'),
                     group=rep(TVR$ID, length(content)))
-  tvr.data <- rbind.data.frame(tvr.data, new)
+  tvr.data <- rbind.data.frame(tvr.data, new, make.row.names=F, stringsAsFactors=F)
   tvr.data$id <- 1:nrow(tvr.data)  # reassigning ids here
-  rownames(tvr.data) <- NULL
   save(tvr.data, file=TVR$DATA)
-  View(tvr.data)
+  print.data.frame(tvr.data)
   return(timevis::timevis(tvr.data))
 }
 
@@ -74,12 +79,12 @@ tvr_rm <- function(id=NULL) {
   # Removes tasks from ur tvr data and renders a new plot.
   # @param {double} id Vector of task identifier/s
   # @return {Object.<htmlwidgets>} Interactive timevis plot
-  stopifnot(isTRUE(require('timevis')), file.exists(TVR$DATA), !missing(id))
+  stopifnot(file.exists(TVR$DATA), !missing(id))
   load(TVR$DATA)
   tvr.data <- tvr.data[!tvr.data$id %in% id, ]
   if (nrow(tvr.data) > 0) tvr.data$id <- 1:nrow(tvr.data)
   rownames(tvr.data) <- NULL
   save(tvr.data, file=TVR$DATA)
-  View(tvr.data)
+  print.data.frame(tvr.data)
   return(timevis::timevis(tvr.data))
 }
