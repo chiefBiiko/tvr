@@ -1,7 +1,7 @@
 # tvr_team
 
 TVRT <- list()
-TVRT$NAME <- 'Biiko'  # 'Balou', 'Christian
+TVRT$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVRT$STORE_ID <- '1h2msv'
 TVRT$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')
 
