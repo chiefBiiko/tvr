@@ -36,7 +36,7 @@ TVR$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVR$STORE_ID <- '1h2msv'
 TVR$ID <- sapply(list(TVR$NAME), function(n) {
   hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVR$STORE_ID))$hash
-  return(hash[hash$content == TVR$NAME, 'id'])  # ur personal ID
+  return(hash[hash$content == n, 'id'])  # ur personal ID
 })
 
 if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) dir.create(file.path(.libPaths()[1], 'tvr'))
@@ -72,9 +72,9 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL, data=TVR$DATA, id=TVR$ID
   } else {
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
   }
-  new <- data.frame(id=double(length(content)), content=as.character(content),
+  new <- data.frame(id=integer(length(content)), content=as.character(content),
                     start=format(start, '%Y-%m-%d'), end=format(end, '%Y-%m-%d'),
-                    group=rep(id, length(content)))
+                    group=rep(id, length(content)), stringsAsFactors=F)
   tvr.data <- rbind.data.frame(tvr.data, new, make.row.names=F, stringsAsFactors=F)
   tvr.data$id <- 1:nrow(tvr.data)  # reassigning ids here
   save(tvr.data, file=data)
@@ -91,7 +91,7 @@ tvr_rm <- function(id=NULL, data=TVR$DATA) {
   load(data)
   tvr.data <- tvr.data[!tvr.data$id %in% id, ]
   if (nrow(tvr.data) > 0) tvr.data$id <- 1:nrow(tvr.data)
-  rownames(tvr.data) <- NULL
+  row.names(tvr.data) <- NULL
   save(tvr.data, file=data)
   print.data.frame(tvr.data)
   return(timevis::timevis(tvr.data))

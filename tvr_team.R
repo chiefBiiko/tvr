@@ -9,7 +9,7 @@ TVRT$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVRT$STORE_ID <- '1h2msv'
 TVRT$ID <- sapply(list(TVR$NAME), function(n) {
   hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVR$STORE_ID))$hash
-  return(hash[hash$content == TVR$NAME, 'id'])  # ur personal ID
+  return(hash[hash$content == n, 'id'])  # ur personal ID
 })
 
 TVRT$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')
