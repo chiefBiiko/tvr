@@ -11,11 +11,11 @@
 # 
 # Data format (just 4 u 2 know)
 #   tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
-#   @column {double} id Task identifier
+#   @column {integer} id Task identifier
 #   @column {character} content Task description
 #   @column {character} start Task start date
 #   @column {character} end Task end date
-#   @column {double} group Ur personal identifier [TVR$ID]
+#   @column {integer} group Ur personal identifier [TVR$ID]
 #   tvr.data is saved as ur personal task store @ TVR$DATA
 #
 # Usage
@@ -84,7 +84,7 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL, data=TVR$DATA, id=TVR$ID
 
 tvr_rm <- function(id=NULL, data=TVR$DATA) {
   # Removes tasks from ur tvr data and renders a new plot.
-  # @param {double} id Vector of task identifier/s
+  # @param {integer} id Vector of task identifier/s
   # @param {character} data Path 2 ur personal tvr data
   # @return {Object.<htmlwidgets>} Interactive timevis plot
   stopifnot(file.exists(data), !missing(id))
