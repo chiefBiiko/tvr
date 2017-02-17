@@ -7,8 +7,8 @@ lapply(list('jsonlite', 'httr', 'timevis'), function(p) {
 TVRT <- list()
 TVRT$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVRT$STORE_ID <- '1h2msv'
-TVRT$ID <- sapply(list(TVR$NAME), function(n) {
-  hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVR$STORE_ID))$hash
+TVRT$ID <- sapply(list(TVRT$NAME), function(n) {
+  hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVRT$STORE_ID))$hash
   return(hash[hash$content == n, 'id'])  # ur personal ID
 })
 
