@@ -73,7 +73,7 @@ tvr_add <- function(content=NULL, start=NULL, end=NULL, data=TVR$DATA, id=TVR$ID
     tvr.data <- data.frame(id=NULL, content=NULL, start=NULL, end=NULL, group=NULL)
   }
   new <- data.frame(id=integer(length(content)), content=as.character(content),
-                    start=format(start, '%Y-%m-%d'), end=format(end, '%Y-%m-%d'),
+                    start=format(start, format='%Y-%m-%d'), end=format(end, format='%Y-%m-%d'),
                     group=rep(id, length(content)), stringsAsFactors=F)
   tvr.data <- rbind.data.frame(tvr.data, new, make.row.names=F, stringsAsFactors=F)
   tvr.data$id <- 1:nrow(tvr.data)  # reassigning ids here
