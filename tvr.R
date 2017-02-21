@@ -24,8 +24,8 @@
 #   tvr_add(c('new task', 'foo task'), rep(Sys.Date(), 2), rep(Sys.Date() + 1, 2))
 #   tvr_rm(1:2)  # remove tasks
 #   # working in a team
-#   tvr_team()  # pull and view ur team`s data
-#   tvr_push()  # update ur team's remote store with ur own data`
+#   tvr_team()  # pull and view ur team's data
+#   tvr_push()  # update ur team's remote store with ur own data
 
 lapply(list('jsonlite', 'timevis'), function(p) {
   if (!p %in% installed.packages()) install.packages(p)
@@ -60,8 +60,8 @@ tvr <- function(data=TVR$DATA) {
 tvr_add <- function(content=NULL, start=NULL, end=NULL, data=TVR$DATA, id=TVR$ID) {
   # Adds tasks 2 ur tvr data and renders a new plot.
   # @param {character} content Vector of task descriptions
-  # @param {Date} start Vector of Sys.Date() values
-  # @param {Date} end Vector of Sys.Date() values
+  # @param {Date/character} start Vector of Sys.Date() values or strings in the format '%Y-%m-%d'
+  # @param {Date/character} end Vector of Sys.Date() values or strings in the format '%Y-%m-%d'
   # @param {character} data Path 2 ur personal tvr data
   # @param {integer} id Ur personal identifier
   # @return {Object.<htmlwidgets>} Interactive timevis plot
