@@ -1,7 +1,7 @@
 # tvr_team
 
 lapply(list('jsonlite', 'httr', 'timevis'), function(p) {
-  if (!p %in% installed.packages()) install.packages(p)
+  if (!p %in% .packages(T)) install.packages(p)
 })
 
 TVRT <- list()

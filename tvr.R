@@ -28,7 +28,7 @@
 #   tvr_push()  # update ur team's remote store with ur own data
 
 lapply(list('jsonlite', 'timevis'), function(p) {
-  if (!p %in% installed.packages()) install.packages(p)
+  if (!p %in% .packages(T)) install.packages(p)
 })
 
 TVR <- list()
