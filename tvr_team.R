@@ -7,12 +7,11 @@ lapply(list('jsonlite', 'httr', 'timevis'), function(p) {
 TVRT <- list()
 TVRT$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVRT$STORE_ID <- '1h2msv'
+TVRT$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')
 TVRT$ID <- sapply(list(TVRT$NAME), function(n) {
   hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVRT$STORE_ID))$hash
   return(hash[hash$content == n, 'id'])  # ur personal ID
 })
-
-TVRT$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')
 
 tvr_team <- function(store_id=TVRT$STORE_ID) {
   # Pull and view ur team's remote store

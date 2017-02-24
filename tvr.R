@@ -34,13 +34,14 @@ lapply(list('jsonlite', 'timevis'), function(p) {
 TVR <- list()
 TVR$NAME <- 'Biiko'  # 'Balou', 'Christian'
 TVR$STORE_ID <- '1h2msv'
+TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # path 2 ur own data
+if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) {
+  dir.create(file.path(.libPaths()[1], 'tvr'))
+}
 TVR$ID <- sapply(list(TVR$NAME), function(n) {
   hash <- jsonlite::fromJSON(paste0('https://api.myjson.com/bins/', TVR$STORE_ID))$hash
   return(hash[hash$content == n, 'id'])  # ur personal ID
 })
-
-if (!dir.exists(file.path(.libPaths()[1], 'tvr'))) dir.create(file.path(.libPaths()[1], 'tvr'))
-TVR$DATA <- file.path(.libPaths()[1], 'tvr', 'tvr.Rda')  # path 2 ur own data
 
 tvr <- function(data=TVR$DATA) {
   # Loads and renders ur tvr data.
